@@ -1,0 +1,55 @@
+# Problem 2.1 - VALID PARENTHESES
+# Given a string containing only the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+# A string is valid if :
+#   - Open brackets are closed by the same type of brackets.
+#   - Open brackets are closed in the correct order.
+#   - Every close bracket has a corresponding open bracket.
+
+# ---------------------------------------------------------------------------------------------------------------------------------------
+# 1. Brute Force
+# ---------------------------------------------------------------------------------------------------------------------------------------
+# Idea  : Repeatedly remove all valid adjacent pairs '()', '{}' and '[]' until no more can be removed. If the string becomes empty, it's valid.
+# Time  : O(n²)     {Each replace operation may scan the string repeatedly}
+# Space : O(1)      {No extra data structures used}
+class Solution1:
+    def isValid(self, s):
+        while '()' in s or '{}' in s or '[]' in s:
+            s = s.replace('()', '')    # Removing all valid '()' pairs
+            s = s.replace('{}', '')    # Removing all valid '{}' pairs
+            s = s.replace('[]', '')    # Removing all valid '[]' pairs
+        return s == ''                 # valid if empty
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------
+# 2. Stack
+# ---------------------------------------------------------------------------------------------------------------------------------------
+# Idea  : Use a stack to keep track of opening brackets. For every closing bracket, check if it matches the last opening bracket on the stack.
+# Time  : O(n)      {Single pass through string}
+# Space : O(n)      {Stack can grow up to size n in the worst case}
+class Solution2:
+    def isValid(self, s):
+        stack = []                                          # Stack to keep track of open brackets
+        closeToOpen = {")" : "(", "]" : "[", "}" : "{"}     # Mapping each closing bracket to its matching open bracket
+
+        for c in s:
+            if c in closeToOpen:
+                if stack and stack[-1] == closeToOpen[c]:   # Checking if stack is not empty and top matches the expected opening
+                    stack.pop()                             # Valid match found, pop the open bracket
+                else:
+                    return False                            # Invalid match or stack is empty
+            else:
+                stack.append(c)                             # Pushing opening bracket to the stack
+
+        return True if not stack else False                 # valid if stack empty
+
+
+def main():
+    s = "[{{([{()}])}}]"
+    print(s)
+    print(Solution1().isValid(s))
+    print(Solution2().isValid(s))
+
+    
+
+if __name__ == "__main__":
+    main()
